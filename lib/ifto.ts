@@ -75,8 +75,16 @@ export class Ifto {
   private logEntries: string[] = [];
 
   /**
-   * This holds minimum value
+   * This holds minimum time difference (in milliseconds) value to flush the logs.
    *
+   * Lambda context contains 'getRemainingTimeInMillis()' function which give how many milliseconds
+   * left for execution. flushLogsWhenDifferenceLessThanMilliseconds defines minimum milliseconds left,
+   * before flushing logs.
+   * Eg:
+   * if (context.getRemainingTimeInMillis() <= flushLogsWhenDifferenceLessThanMilliseconds) {
+   *  flush the logs
+   * }
+   * 
    * @private
    * @type {number}
    * @memberof Ifto
