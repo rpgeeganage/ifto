@@ -1,0 +1,12 @@
+doc
+lib
+test
+examples
+_config.yml
+tsconfig.json
+tslint.json
+.prettierrc
+.prettierignore
+.travis.yml
+yarn-error.log
+CODE_OF_CONDUCT.md
