@@ -45,7 +45,7 @@ interface Options {
 /**
  * Default options
  */
-const defaults: Options = {
+export const defaults: Options = {
   flushLogsWhenDifferenceLessThanMilliseconds: 50,
   output: console.log
 };
@@ -63,7 +63,7 @@ export class Ifto {
    * @private
    * @memberof Ifto
    */
-  private readyMonitor = false;
+  private allowedToMonitor = false;
 
   /**
    * Holds the log entries
@@ -84,7 +84,7 @@ export class Ifto {
    * if (context.getRemainingTimeInMillis() <= flushLogsWhenDifferenceLessThanMilliseconds) {
    *  flush the logs
    * }
-   * 
+   *
    * @private
    * @type {number}
    * @memberof Ifto
@@ -137,10 +137,20 @@ export class Ifto {
    * @returns
    * @memberof Ifto
    */
-  addContext(lambdaContext: Context) {
+  addLambdaContext(lambdaContext: Context) {
     this.lambdaContext = lambdaContext;
 
     return this;
+  }
+
+  /**
+   * Return lambda Context
+   *
+   * @returns {Context}
+   * @memberof Ifto
+   */
+  getLambdaContext() {
+    return this.lambdaContext;
   }
 
   /**
@@ -157,18 +167,71 @@ export class Ifto {
   }
 
   /**
+   * Get output function
+   *
+   * @returns {OutputFunction}
+   * @memberof Ifto
+   */
+  getOutputFunction() {
+    return this.output;
+  }
+
+  /**
+   * Get log entries
+   *
+   * @returns
+   * @memberof Ifto
+   */
+  getLogEntries() {
+    return this.logEntries;
+  }
+
+  /**
+   * Log data
+   *
+   * @param {string} entry
+   * @returns
+   * @memberof Ifto
+   */
+  log(entry: string) {
+    this.logEntries.push(this.getLogEntry(this.logEntries, entry));
+
+    return this;
+  }
+
+  /**
+   * Get value for flushLogsWhenDifferenceLessThanMilliseconds
+   *
+   * @returns
+   * @memberof Ifto
+   */
+  getFlushLogsWhenDifferenceLessThanMilliseconds() {
+    return this.flushLogsWhenDifferenceLessThanMilliseconds;
+  }
+
+  /**
    * Attach to Global object
    *
    * @param {ExtendedNodeJsGlobal} globalObject
    * @returns
    * @memberof Ifto
    */
-  attachToGlobal(globalObject: ExtendedNodeJsGlobal) {
+  attach(globalObject: ExtendedNodeJsGlobal) {
     if (!globalObject.Ifto) {
       globalObject.Ifto = this;
     }
 
     return this;
+  }
+
+  /**
+   * Indicates whether the monitoring should start or not
+   *
+   * @returns
+   * @memberof Ifto
+   */
+  isAllowedToMonitor() {
+    return this.allowedToMonitor;
   }
 
   /**
@@ -178,19 +241,15 @@ export class Ifto {
    * @returns
    * @memberof Ifto
    */
-  init(currentProcess: NodeJS.Process) {
-    const envValue = currentProcess.env[ENV_VAR_MONITORING_START_NAME];
-    this.readyMonitor = !!(
+  init(params: NodeJS.ProcessEnv) {
+    const envValue = params[ENV_VAR_MONITORING_START_NAME];
+    this.allowedToMonitor = !!(
       envValue &&
       envValue.toLocaleLowerCase() === ENV_VAR_MONITORING_START_VALUE
     );
-    if (
-      currentProcess.env[
-        ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS
-      ]
-    ) {
+    if (params[ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS]) {
       const timeout = parseInt(
-        currentProcess.env[
+        params[
           ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS
         ] as string,
         10
@@ -210,40 +269,25 @@ export class Ifto {
    * @returns
    * @memberof Ifto
    */
-  monitor(executor: Promise<any>) {
-    return new Promise((resolve, reject) => {
-      let interval: NodeJS.Timeout;
-      if (this.readyMonitor && this.lambdaContext) {
-        interval = setInterval(() => {
-          this.output(this.logEntries.join('\n'));
-        }, this.lambdaContext.getRemainingTimeInMillis() - this.flushLogsWhenDifferenceLessThanMilliseconds);
-      }
+  async monitor(handler: Promise<any>): Promise<any> {
+    let interval: NodeJS.Timeout | undefined;
+    if (this.allowedToMonitor && this.lambdaContext) {
+      interval = setInterval(() => {
+        this.output(this.logEntries.join('\n'));
+        this.clearMonitoringInterval(interval);
+      }, this.lambdaContext.getRemainingTimeInMillis() - this.flushLogsWhenDifferenceLessThanMilliseconds);
+    }
 
-      executor
-        .then((data: any) => {
-          this.monitoringLogging(interval);
+    try {
+      const result = await handler;
+      this.clearMonitoringInterval(interval);
 
-          return resolve(data);
-        })
-        .catch((err) => {
-          this.monitoringLogging(interval);
+      return result;
+    } catch (error) {
+      this.clearMonitoringInterval(interval);
 
-          return reject(err);
-        });
-    });
-  }
-
-  /**
-   * Log data
-   *
-   * @param {string} entry
-   * @returns
-   * @memberof Ifto
-   */
-  log(entry: string) {
-    this.logEntries.push(this.getLogEntry(this.logEntries, entry));
-
-    return this;
+      throw error;
+    }
   }
 
   /**
@@ -253,7 +297,7 @@ export class Ifto {
    * @param {NodeJS.Timeout} [interval]
    * @memberof Ifto
    */
-  private monitoringLogging(interval?: NodeJS.Timeout) {
+  private clearMonitoringInterval(interval?: NodeJS.Timeout) {
     if (interval) {
       clearInterval(interval);
     }

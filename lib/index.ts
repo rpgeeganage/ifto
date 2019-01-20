@@ -20,7 +20,7 @@ export * from './ifto';
  */
 export function start(globalObject: NodeJS.Global) {
   const ifTo = Ifto.getInstance();
-  ifTo.attachToGlobal(globalObject);
+  ifTo.attach(globalObject);
 }
 
 /**
