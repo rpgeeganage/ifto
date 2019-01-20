@@ -1,4 +1,10 @@
 # IFTO - If (Lambda) Timeout
+[![License](https://img.shields.io/github/license/rpgeeganage/ifto.svg)](https://img.shields.io/github/license/rpgeeganage/ifto.svg)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/rpgeeganage/ifto.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/rpgeeganage/ifto/context:javascript)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b9cab5f9a44143c48fd12df6fe1819ee)](https://www.codacy.com/app/rpgeeganage/ifto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rpgeeganage/ifto&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/rpgeeganage/ifto.svg?branch=master)](https://travis-ci.org/rpgeeganage/ifto)
+[![Known Vulnerabilities](https://snyk.io/test/github/rpgeeganage/ifto/badge.svg?targetFile=package.json)](https://snyk.io/test/github/rpgeeganage/ifto?targetFile=package.json)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5a3c79b82c052f0ac4ca/maintainability)](https://codeclimate.com/github/rpgeeganage/ifto/maintainability)
 
 ### TypeScript Doc: [https://rpgeeganage.github.io/ifto/doc/](https://rpgeeganage.github.io/ifto/doc/)
 
