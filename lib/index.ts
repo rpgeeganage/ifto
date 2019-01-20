@@ -1,4 +1,7 @@
 import { Ifto } from './ifto';
+export interface ExtendedGlobalObject extends NodeJS.Global {
+  Ifto?: Ifto;
+}
 
 /**
  * New declaration of the Global variable with Ifto instance
@@ -16,14 +19,16 @@ export * from './ifto';
  * Start Ifto. Attach to global object
  *
  * @export
- * @param {NodeJS.Global} globalObject
+ * @param {ExtendedGlobalObject} globalObject
  */
-export function start(globalObject: NodeJS.Global) {
-  const ifTo = Ifto.getInstance();
-  ifTo.attach(globalObject);
+export function start(globalObject: ExtendedGlobalObject) {
+  if (!globalObject.Ifto) {
+    const ifto = Ifto.getInstance();
+    ifto.attach(globalObject);
+  }
 }
 
 /**
  * Start the Ifto
-*/
+ */
 start(global);
