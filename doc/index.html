@@ -938,22 +938,20 @@ img { max-width: 100%; }
 			<h2 id="configuration">Configuration</h2>
 			<h6 id="-environment-variables-">(Environment variables)</h6>
 			<ul>
-				<li><h4 id="ifto_start">ifto_start</h4>
-				Please set the <code>ifto_start</code> as <code>true</code> in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)</li>
-				<li><h4 id="ifto_flush_when">ifto_flush_when</h4>
-					<p>  This indicates the <code>minimum</code> number of <code>milliseconds</code> remaining in <code>context.getRemainingTimeInMillis()</code>, before flushing the logs to the output. (default setting is to write using <code>console.log</code>). See the below.</p>
-					<p> (Default value is <strong><em>50</em></strong>)</p>
-					<pre><code><span class="hljs-keyword">if</span> context.getRemainingTimeInMillis() &lt;= ifto_flush_when <span class="hljs-keyword">then</span>
-<span class="hljs-built_in">flush</span> the logs to standard <span class="hljs-built_in">output</span>
-<span class="hljs-keyword">end</span> <span class="hljs-keyword">if</span></code></pre></li>
+				<li><strong>ifto_start</strong></li>
 			</ul>
-			<h2 id="how-to-use-it-">How to use it?</h2>
+			<p>Please set the <code>ifto_start</code> as <code>true</code> in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)</p>
+			<ul>
+				<li><strong>ifto_flush_when</strong></li>
+			</ul>
+			<p>This indicates the <code>minimum</code> number of <code>milliseconds</code> remaining in <code>context.getRemainingTimeInMillis()</code>, before flushing the logs to the output. (default setting is to write using <code>console.log</code>). See the below.</p>
+			<p>   (Default value is <strong><em>50</em></strong>)</p>
+			<pre><code><span class="hljs-keyword">if</span> context.getRemainingTimeInMillis() &lt;= ifto_flush_when <span class="hljs-keyword">then</span>
+  <span class="hljs-built_in">flush</span> the logs to standard <span class="hljs-built_in">output</span>
+<span class="hljs-keyword">end</span> <span class="hljs-keyword">if</span></code></pre><h2 id="how-to-use-it-">How to use it?</h2>
 			<p>Assume that you lambda is structured as follows.</p>
 			<pre><code>index.ts
-<span class="hljs-class"><span class="hljs-keyword">lib</span>/<span class="hljs-title">handler</span>.<span class="hljs-title">ts</span></span></code></pre><ul>
-				<li><h5 id="modifications-in-index-ts">modifications in <code>index.ts</code></h5>
-				</li>
-			</ul>
+<span class="hljs-class"><span class="hljs-keyword">lib</span>/<span class="hljs-title">handler</span>.<span class="hljs-title">ts</span></span></code></pre><h5 id="modifications-in-index-ts">modifications in <code>index.ts</code></h5>
 			<pre><code class="language-ts"><span class="hljs-comment">/**
  * Just import the Ifto module.
  * This will, create a Ifto in the "global" name space.
@@ -979,10 +977,7 @@ img { max-width: 100%; }
     handler(event)
   );
 }</code></pre>
-			<ul>
-				<li><h5 id="modifications-in-lib-handler-ts">modifications in <code>lib/handler.ts</code></h5>
-				</li>
-			</ul>
+			<h5 id="modifications-in-lib-handler-ts">modifications in <code>lib/handler.ts</code></h5>
 			<pre><code class="language-ts"><span class="hljs-comment">/**
  * below import statement will required, only if you write individual unit tests for this file
  */</span>
@@ -1005,15 +1000,20 @@ img { max-width: 100%; }
 }</code></pre>
 			<h2 id="methods">Methods</h2>
 			<ul>
-				<li><h4 id="ifto-addlambdacontext-context-">Ifto.addLambdaContext(<code>context</code>);</h4>
-				set <code>Context</code> object passed to the lambda function.</li>
-				<li><h4 id="ifto-init-process-env-">Ifto.init(<code>process.env</code>);</h4>
-				Pass the <code>process.env</code> to read the environment variables defined.</li>
-				<li><h4 id="ifto-log-logmessage-">Ifto. log(<code>logMessage</code>);</h4>
-				Adds the log message, so in the case of <code>timeout</code>, this message will be flushed to the standard output.</li>
-				<li><h4 id="ifto-monitor-promise-">Ifto.monitor(<code>Promise</code>);</h4>
-				Accepts the handler function to in order to monitoring. (This won&#39;t change the <code>return values</code> or <code>errors thrown</code> buy the handler function).</li>
+				<li><strong>Ifto.addLambdaContext(<code>context</code>);</strong></li>
 			</ul>
+			<p>set <code>Context</code> object passed to the lambda function.</p>
+			<ul>
+				<li><strong>Ifto.init(<code>process.env</code>);</strong></li>
+			</ul>
+			<p>Pass the <code>process.env</code> to read the environment variables defined.</p>
+			<ul>
+				<li><p><strong>Ifto. log(<code>logMessage</code>);</strong></p>
+					<p>Adds the log message, so in the case of <code>timeout</code>, this message will be flushed to the standard output.</p>
+				</li>
+				<li><strong>Ifto.monitor(<code>Promise</code>);</strong></li>
+			</ul>
+			<p>Accepts the handler function to in order to monitoring. (This won&#39;t change the <code>return values</code> or <code>errors thrown</code> buy the handler function).</p>
 			<h2 id="final-output-in-case-of-timeout-error-">Final output - (in case of <code>Timeout error</code>)</h2>
 			<pre><code><span class="hljs-number">2019</span><span class="hljs-number">-01</span><span class="hljs-number">-20</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">26.578</span>Z    ccbc1d49<span class="hljs-number">-3336</span><span class="hljs-number">-47</span>c2<span class="hljs-number">-9</span>d49-c1d47ffc23de
 Expecting a possible lambda timeout.
