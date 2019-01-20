@@ -3,7 +3,7 @@
   "description": "A simple debugging module for AWS Lambda (λ) timeout",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "scripts": {
     "pretest": "npm run build",
     "test": "nyc mocha",
@@ -12,7 +12,7 @@
     "format": "prettier --write \"**/*.ts\" \"**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prepublishOnly": "npm build && npm test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A lib",
     "postversion": "git push && git push --tags",

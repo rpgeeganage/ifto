@@ -27,9 +27,9 @@ async handler(event: SQSEvent, context: Context) {
 ## Configuration
 
 ###### (Environment variables)
-* #### ifto_start
+#### ifto_start
     Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)
-* #### ifto_flush_when
+#### ifto_flush_when
     This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
 
    (Default value is ***50***)
@@ -45,7 +45,7 @@ Assume that you lambda is structured as follows.
 	index.ts
 	lib/handler.ts
 
-* ##### modifications in ```index.ts```
+##### modifications in ```index.ts```
 
 ```ts
 /**
@@ -75,7 +75,7 @@ export async function myLambda(event: SQSEvent, context: Context) {
 }
 ```
 
-* ##### modifications in ``lib/handler.ts``
+##### modifications in ``lib/handler.ts``
 
 ```ts
 /**
