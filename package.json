@@ -1,6 +1,6 @@
 {
   "name": "ifto",
-  "description": "If lambda TimeOut",
+  "description": "a Debug logging If lambda TimeOut",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "version": "3.1.0",
@@ -23,13 +23,11 @@
     "url": "git+https://github.com/rpgeeganage/ifto.git"
   },
   "keywords": [
-    "DEBUG",
-    "Debug",
     "debug",
-    "TypeScript",
-    "Lambda",
-    "AWS",
-    "DevOps"
+    "typescript",
+    "lambda",
+    "aws",
+    "devops"
   ],
   "dependencies": {},
   "engines": {
@@ -61,8 +59,7 @@
     ],
     "exclude": [
       "**/*.d.ts",
-      "test/*.ts",
-      "examples/*.ts"
+      "test/*.ts"
     ],
     "require": [
       "ts-node/register"
@@ -76,7 +73,7 @@
     "instrument": true
   },
   "bugs": {
-    "url": "https://github.com/rpgeeganage/wem/issues"
+    "url": "https://github.com/rpgeeganage/ifto/issues"
   },
-  "homepage": "https://github.com/rpgeeganage/wem#readme"
+  "homepage": "https://github.com/rpgeeganage/ifto#readme"
 }
