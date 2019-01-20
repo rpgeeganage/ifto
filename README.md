@@ -17,12 +17,15 @@ The purpose of this module is to work as a debugging tool during a timeout. It i
 
 ## How is this module work?
 This package is designed to manage ```timeout``` errors using ```getRemainingTimeInMillis()``` provided in the [```Context```](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html) object. [```Context```](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html) is passed during the executing of the lambda as mentioned below.
+
 ```ts
 async handler(event: SQSEvent, context: Context) {
   ...
 }
 ```
+
 ## Configuration
+
 ###### (Environment variables)
 * #### ifto_start
     Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)
@@ -35,6 +38,7 @@ if context.getRemainingTimeInMillis() <= ifto_flush_when then
   flush the logs to standard output
 end if
 ```
+
 ## How to use it?
 Assume that you lambda is structured as follows.
 
@@ -43,8 +47,10 @@ Assume that you lambda is structured as follows.
 `-- lib
     `-- handler.ts
 ```
+
 * ##### modifications in ```index.ts```
 ```index.ts``` contains the expose the ```handler``` function.
+
 
 ```ts
 /**
@@ -73,6 +79,7 @@ export async function myLambda(event: SQSEvent, context: Context) {
   );
 }
 ```
+
 * ##### modifications in ```lib/handler.ts```
 ```ts
 /**
@@ -107,6 +114,7 @@ export async function handler(event: SQSEvent) {
 * #### Ifto.monitor(```Promise```);
   Accepts the handler function to in order to monitoring. (This won't change the ```return values``` or ```errors thrown``` buy the handler function).
 
+
 ## Final output - (in case of ```Timeout error```)
 ```
 2019-01-20T11:27:26.578Z    ccbc1d49-3336-47c2-9d49-c1d47ffc23de
@@ -119,6 +127,7 @@ Current log:
 2019-0-0T11:27:24.956 2: log entry 2
 2019-0-0T11:27:25.236 3: log entry 3
 ```
+
 ## Important note
 * The default of ```ifto_flush_when``` is ``50`` and it was decided by running couple of lambdas and printing ```context.getRemainingTimeInMillis()``` value. In case of ```false positive``` change this value.
 * I haven't run any analysis on ``memory usage``.

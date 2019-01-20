@@ -915,6 +915,14 @@ img { max-width: 100%; }
 	<div class="content-wrap">
 		<div class="tsd-panel tsd-typography">
 			<h1 id="ifto-if-lambda-timeout">IFTO - If (Lambda) Timeout</h1>
+			<p><a href="https://img.shields.io/github/license/rpgeeganage/ifto.svg"><img src="https://img.shields.io/github/license/rpgeeganage/ifto.svg" alt="License"></a>
+				<a href="https://lgtm.com/projects/g/rpgeeganage/ifto/context:javascript"><img src="https://img.shields.io/lgtm/grade/javascript/g/rpgeeganage/ifto.svg?logo=lgtm&logoWidth=18" alt="Language grade: JavaScript"></a>
+				<a href="https://www.codacy.com/app/rpgeeganage/ifto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rpgeeganage/ifto&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/b9cab5f9a44143c48fd12df6fe1819ee" alt="Codacy Badge"></a>
+				<a href="https://www.codacy.com/app/rpgeeganage/ifto?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rpgeeganage/ifto&amp;utm_campaign=Badge_Coverage"><img src="https://api.codacy.com/project/badge/Coverage/b9cab5f9a44143c48fd12df6fe1819ee" alt="Codacy Badge"></a>
+				<a href="https://travis-ci.org/rpgeeganage/ifto"><img src="https://travis-ci.org/rpgeeganage/ifto.svg?branch=master" alt="Build Status"></a>
+				<a href="https://snyk.io/test/github/rpgeeganage/ifto?targetFile=package.json"><img src="https://snyk.io/test/github/rpgeeganage/ifto/badge.svg?targetFile=package.json" alt="Known Vulnerabilities"></a>
+			<a href="https://codeclimate.com/github/rpgeeganage/ifto/maintainability"><img src="https://api.codeclimate.com/v1/badges/5a3c79b82c052f0ac4ca/maintainability" alt="Maintainability"></a></p>
+			<h3 id="typescript-doc-https-rpgeeganage-github-io-ifto-doc-">TypeScript Doc: <a href="https://rpgeeganage.github.io/ifto/doc/">https://rpgeeganage.github.io/ifto/doc/</a></h3>
 			<p>The purpose of this module is to work as a debugging tool during a timeout. It is hard to debug when a lambda exit exists with <code>Task timed out after 2.00 seconds</code>.</p>
 			<ul>
 				<li><p>One solution is to increase the <code>Timout</code> value. Although this fixed the problem (sometimes), there is no guarantee that, a timeout may not occur again until proper debugging has done.</p>
@@ -937,82 +945,90 @@ img { max-width: 100%; }
 					<p> (Default value is <strong><em>50</em></strong>)</p>
 					<pre><code><span class="hljs-keyword">if</span> context.getRemainingTimeInMillis() &lt;= ifto_flush_when <span class="hljs-keyword">then</span>
 <span class="hljs-built_in">flush</span> the logs to standard <span class="hljs-built_in">output</span>
-<span class="hljs-keyword">end</span> <span class="hljs-keyword">if</span></code></pre><h2 id="how-to-use-it-">How to use it?</h2>
-					<p>Assume that you lambda is structured as follows.</p>
-				</li>
+<span class="hljs-keyword">end</span> <span class="hljs-keyword">if</span></code></pre></li>
 			</ul>
+			<h2 id="how-to-use-it-">How to use it?</h2>
+			<p>Assume that you lambda is structured as follows.</p>
 			<pre><code class="language-o">|-- index.ts
 `-- lib
     `-- handler.ts</code></pre>
 			<ul>
 				<li><h5 id="modifications-in-index-ts">modifications in <code>index.ts</code></h5>
-					<code>index.ts</code> contains the expose the <code>handler</code> function.
+				<code>index.ts</code> contains the expose the <code>handler</code> function.</li>
+			</ul>
+			<pre><code class="language-ts"><span class="hljs-comment">/**
+ * Just import the Ifto module.
+ * This will, create a Ifto in the "global" name space.
+ * So other files can use Ifto module without creating a object
+ */</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">'Ifto'</span>;
+<span class="hljs-keyword">import</span> { Context, SQSEvent } <span class="hljs-keyword">from</span> <span class="hljs-string">'aws-lambda'</span>;
+<span class="hljs-keyword">import</span> { handler } <span class="hljs-keyword">from</span> <span class="hljs-string">'./lib/handler'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myLambda</span>(<span class="hljs-params">event: SQSEvent, context: Context</span>) </span>{
+  Ifto
+    .addLambdaContext(context) <span class="hljs-comment">// Add the context module</span>
+    .init(process.env); <span class="hljs-comment">// Add the process.env inorder to read the required configurations.</span>
+
+  <span class="hljs-comment">// Use Ifto.log() to add log entry</span>
+  Ifto
+    .log(<span class="hljs-string">'My lambda execution started.'</span>);
+
+
+  <span class="hljs-comment">// Use Ifto.monitor() function to start monitoring, if configured properly.</span>
+  <span class="hljs-keyword">return</span> Ifto.monitor(
+    <span class="hljs-comment">// Pass the handler function</span>
+    handler(event)
+  );
+}</code></pre>
+			<ul>
+				<li><h5 id="modifications-in-lib-handler-ts">modifications in <code>lib/handler.ts</code></h5>
 					<code>`</code>ts
 					/**<ul>
-						<li>Just import the Ifto module.</li>
-						<li>This will, create a Ifto in the &quot;global&quot; name space.</li>
-						<li>So other files can use Ifto module without creating a object
+						<li>below import statement will required, only if you write individual unit tests for this file
 							*/
 							import &#39;Ifto&#39;;
-							import { Context, SQSEvent } from &#39;aws-lambda&#39;;
-						import { handler } from &#39;./lib/handler&#39;;</li>
+						import { SQSEvent } from &#39;aws-lambda&#39;;</li>
 					</ul>
 				</li>
 			</ul>
-			<p>export async function myLambda(event: SQSEvent, context: Context) {
-				Ifto
-				.addLambdaContext(context) // Add the context module
-			.init(process.env); // Add the process.env inorder to read the required configurations.</p>
-			<p>  // Use Ifto.log() to add log entry
-				Ifto
-			.log(&#39;My lambda execution started.&#39;);</p>
-			<p>  // Use Ifto.monitor() function to start monitoring, if configured properly.
-				return Ifto.monitor(
-				// Pass the handler function
-				handler(event)
-				);
-			}</p>
-			<pre><code>* ##### modifications <span class="hljs-keyword">in</span> ```lib/handler.ts</code></pre><pre><code class="language-ts"><span class="hljs-comment">/**
- * below import statement will required, only if you write individual unit tests for this file
- */</span>
-<span class="hljs-keyword">import</span> <span class="hljs-string">'Ifto'</span>;
-<span class="hljs-keyword">import</span> { SQSEvent } <span class="hljs-keyword">from</span> <span class="hljs-string">'aws-lambda'</span>;
-
-<span class="hljs-comment">/*
- * You don't have to pass the context object here
- */</span>
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handler</span>(<span class="hljs-params">event: SQSEvent</span>) </span>{
-  ...
-  Ifto.log(<span class="hljs-string">'log entry 1'</span>);
-
-  ...
-  Ifto.log(<span class="hljs-string">'log entry 2'</span>);
-
-  ...
-  Ifto.log(<span class="hljs-string">'log entry 3'</span>);
-
-}</code></pre>
-			<h2 id="methods">Methods</h2>
+			<p>/*</p>
 			<ul>
-				<li><h4 id="ifto-addlambdacontext-context-">Ifto.addLambdaContext(<code>context</code>);</h4>
-				set <code>Context</code> object passed to the lambda function.</li>
-				<li><h4 id="ifto-init-process-env-">Ifto.init(<code>process.env</code>);</h4>
-				Pass the <code>process.env</code> to read the environment variables defined.</li>
-				<li><h4 id="ifto-log-logmessage-">Ifto. log(<code>logMessage</code>);</h4>
-				Adds the log message, so in the case of <code>timeout</code>, this message will be flushed to the standard output.</li>
-				<li><h4 id="ifto-monitor-promise-">Ifto.monitor(<code>Promise</code>);</h4>
-				Accepts the handler function to in order to monitoring. (This won&#39;t change the <code>return values</code> or <code>errors thrown</code> buy the handler function)</li>
+				<li><p>You don&#39;t have to pass the context object here
+						*/
+						export async function handler(event: SQSEvent) {
+						...
+					Ifto.log(&#39;log entry 1&#39;);</p>
+					<p>...
+					Ifto.log(&#39;log entry 2&#39;);</p>
+					<p>...
+					Ifto.log(&#39;log entry 3&#39;);</p>
+				</li>
 			</ul>
-			<h2 id="final-output-in-case-of-timeout-error-">Final output - (in case of <code>Timeout error</code>)</h2>
-			<pre><code><span class="hljs-number">2019</span><span class="hljs-number">-01</span><span class="hljs-number">-20</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">26.578</span>Z    ccbc1d49<span class="hljs-number">-3336</span><span class="hljs-number">-47</span>c2<span class="hljs-number">-9</span>d49-c1d47ffc23de
-Expecting a possible lambda timeout.
-Only <span class="hljs-number">50</span> milliseconds remaining.
-(If <span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> a <span class="hljs-literal">false</span> positive error, change value by setting up environment variable <span class="hljs-string">"ifto_flush_when"</span>).
-Current log:
-<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.629</span> <span class="hljs-number">0</span>: My lambda execution started.
-<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.919</span> <span class="hljs-number">1</span>: log entry <span class="hljs-number">1</span>
-<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.956</span> <span class="hljs-number">2</span>: log entry <span class="hljs-number">2</span>
-<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">25.236</span> <span class="hljs-number">3</span>: log entry <span class="hljs-number">3</span></code></pre><h2 id="important-note">Important note</h2>
+			<p>}</p>
+			<pre><code>
+## Methods
+* #### Ifto.addLambdaContext(```context```)<span class="hljs-comment">;</span>
+  set ```Context``` object passed to the lambda function.
+* #### Ifto.init(```process.env```)<span class="hljs-comment">;</span>
+  Pass the ```process.env``` to read the environment variables defined.
+* #### Ifto. log(```logMessage```)<span class="hljs-comment">;</span>
+  Adds the log message, so in the case of ```timeout```, this message will be flushed to the standard output.
+* #### Ifto.monitor(```Promise```)<span class="hljs-comment">;</span>
+  Accepts the handler function to in order to monitoring. (This won't change the ```return values``` <span class="hljs-literal">or</span> ```errors thrown``` buy the handler function).
+
+
+## Final output - (in case of ```Timeout error```)</code></pre><p>2019-01-20T11:27:26.578Z    ccbc1d49-3336-47c2-9d49-c1d47ffc23de
+				Expecting a possible lambda timeout.
+				Only 50 milliseconds remaining.
+				(If this is a false positive error, change value by setting up environment variable &quot;ifto_flush_when&quot;).
+				Current log:
+				2019-0-0T11:27:24.629 0: My lambda execution started.
+				2019-0-0T11:27:24.919 1: log entry 1
+				2019-0-0T11:27:24.956 2: log entry 2
+				2019-0-0T11:27:25.236 3: log entry 3
+			<code>`</code></p>
+			<h2 id="important-note">Important note</h2>
 			<ul>
 				<li>The default of <code>ifto_flush_when</code> is <code>50</code> and it was decided by running couple of lambdas and printing <code>context.getRemainingTimeInMillis()</code> value. In case of <code>false positive</code> change this value.</li>
 				<li>I haven&#39;t run any analysis on <code>memory usage</code>.</li>
