@@ -1,6 +1,6 @@
 {
   "name": "ifto",
-  "description": "A debugging module for AWS Lambda (λ) timeout",
+  "description": "A simple debugging module for AWS Lambda (λ) timeout",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "version": "3.1.0",
