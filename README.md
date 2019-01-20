@@ -27,10 +27,12 @@ async handler(event: SQSEvent, context: Context) {
 ## Configuration
 
 ###### (Environment variables)
+
 #### ifto_start
-    Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)
+Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)
+
 #### ifto_flush_when
-    This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
+This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
 
    (Default value is ***50***)
 ```
@@ -101,14 +103,18 @@ export async function handler(event: SQSEvent) {
 ```
 
 ## Methods
-* #### Ifto.addLambdaContext(```context```);
-  set ```Context``` object passed to the lambda function.
-* #### Ifto.init(```process.env```);
-  Pass the ```process.env``` to read the environment variables defined.
-* #### Ifto. log(```logMessage```);
+* **Ifto.addLambdaContext(```context```);**
+
+set ```Context``` object passed to the lambda function.
+* **Ifto.init(```process.env```);**
+
+Pass the ```process.env``` to read the environment variables defined.
+* **Ifto. log(```logMessage```);**
+
   Adds the log message, so in the case of ```timeout```, this message will be flushed to the standard output.
-* #### Ifto.monitor(```Promise```);
-  Accepts the handler function to in order to monitoring. (This won't change the ```return values``` or ```errors thrown``` buy the handler function).
+* **Ifto.monitor(```Promise```);**
+
+Accepts the handler function to in order to monitoring. (This won't change the ```return values``` or ```errors thrown``` buy the handler function).
 
 
 ## Final output - (in case of ```Timeout error```)
