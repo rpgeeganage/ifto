@@ -42,11 +42,10 @@ end if
 ## How to use it?
 Assume that you lambda is structured as follows.
 
-```
 |-- index.ts
 `-- lib
     `-- handler.ts
-```
+
 
 * ##### modifications in ```index.ts```
 ```index.ts``` contains the expose the ```handler``` function.
