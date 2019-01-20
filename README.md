@@ -15,12 +15,14 @@ async handler(event: SQSEvent, context: Context) {
 ## Configuration
 ###### (Environment variables)
 * #### ifto_start
-     Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring.
+    Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)
 * #### ifto_flush_when
-     This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
-```text
+    This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
+
+   (Default value is ***50***)
+```
 if context.getRemainingTimeInMillis() <= ifto_flush_when then
-     flush the logs to standard output
+  flush the logs to standard output
 end if
 ```
 ## How to use it?
@@ -101,7 +103,11 @@ Expecting a possible lambda timeout.
 Only 50 milliseconds remaining.
 (If this is a false positive error, change value by setting up environment variable "ifto_flush_when").
 Current log:
-2019-0-0T11:27:24.629 0: my lambda started
-2019-0-0T11:27:24.919 1: my handler executing
-2019-0-0T11:27:24.956 2: fetching external data
+2019-0-0T11:27:24.629 0: My lambda execution started.
+2019-0-0T11:27:24.919 1: log entry 1
+2019-0-0T11:27:24.956 2: log entry 2
+2019-0-0T11:27:25.236 3: log entry 3
 ```
+## Important note
+* The default of ```ifto_flush_when``` is ``50`` and it was decided by running couple of lambdas and printing ```context.getRemainingTimeInMillis()``` value. In case of ```false positive``` change this value.
+*
