@@ -16,7 +16,7 @@ The purpose of this module is to work as a debugging tool during a timeout. It i
 * Another solution is to a use a module like [```Debug```](https://www.npmjs.com/package/debug) and enable logging. The problem is this, will create log entries irrespective of the ```timeout```.
 
 ## How is this module work?
-This package is designed to manage ```timeout``` errors using ```getRemainingTimeInMillis()``` provided in the [```Context```](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html) object. [```Context```](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html) is passed during the executing of the lambda as mentioned below.
+This package calculates possible ```timeout``` errors using ```getRemainingTimeInMillis()``` provided in the [```Context```](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html) object. [```Context```](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html) is passed during the executing of the lambda as mentioned below.
 
 ```ts
 async handler(event: SQSEvent, context: Context) {

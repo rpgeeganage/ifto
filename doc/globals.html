@@ -931,7 +931,7 @@ img { max-width: 100%; }
 				</li>
 			</ul>
 			<h2 id="how-is-this-module-work-">How is this module work?</h2>
-			<p>This package is designed to manage <code>timeout</code> errors using <code>getRemainingTimeInMillis()</code> provided in the <a href="https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html"><code>Context</code></a> object. <a href="https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html"><code>Context</code></a> is passed during the executing of the lambda as mentioned below.</p>
+			<p>This package calculates possible <code>timeout</code> errors using <code>getRemainingTimeInMillis()</code> provided in the <a href="https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html"><code>Context</code></a> object. <a href="https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html"><code>Context</code></a> is passed during the executing of the lambda as mentioned below.</p>
 			<pre><code class="language-ts"><span class="hljs-keyword">async</span> handler(event: SQSEvent, context: Context) {
   ...
 }</code></pre>
