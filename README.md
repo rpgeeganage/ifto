@@ -46,8 +46,6 @@ Assume that you lambda is structured as follows.
 	lib/handler.ts
 
 * ##### modifications in ```index.ts```
-```index.ts``` contains the expose the ```handler``` function.
-
 
 ```ts
 /**
@@ -77,7 +75,8 @@ export async function myLambda(event: SQSEvent, context: Context) {
 }
 ```
 
-* ##### modifications in ```lib/handler.ts```
+* ##### modifications in ``lib/handler.ts``
+
 ```ts
 /**
  * below import statement will required, only if you write individual unit tests for this file

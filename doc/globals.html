@@ -952,7 +952,7 @@ img { max-width: 100%; }
 			<pre><code>index.ts
 <span class="hljs-class"><span class="hljs-keyword">lib</span>/<span class="hljs-title">handler</span>.<span class="hljs-title">ts</span></span></code></pre><ul>
 				<li><h5 id="modifications-in-index-ts">modifications in <code>index.ts</code></h5>
-				<code>index.ts</code> contains the expose the <code>handler</code> function.</li>
+				</li>
 			</ul>
 			<pre><code class="language-ts"><span class="hljs-comment">/**
  * Just import the Ifto module.
@@ -981,52 +981,49 @@ img { max-width: 100%; }
 }</code></pre>
 			<ul>
 				<li><h5 id="modifications-in-lib-handler-ts">modifications in <code>lib/handler.ts</code></h5>
-					<code>`</code>ts
-					/**<ul>
-						<li>below import statement will required, only if you write individual unit tests for this file
-							*/
-							import &#39;Ifto&#39;;
-						import { SQSEvent } from &#39;aws-lambda&#39;;</li>
-					</ul>
 				</li>
 			</ul>
-			<p>/*</p>
+			<pre><code class="language-ts"><span class="hljs-comment">/**
+ * below import statement will required, only if you write individual unit tests for this file
+ */</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">'Ifto'</span>;
+<span class="hljs-keyword">import</span> { SQSEvent } <span class="hljs-keyword">from</span> <span class="hljs-string">'aws-lambda'</span>;
+
+<span class="hljs-comment">/*
+ * You don't have to pass the context object here
+ */</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handler</span>(<span class="hljs-params">event: SQSEvent</span>) </span>{
+  ...
+  Ifto.log(<span class="hljs-string">'log entry 1'</span>);
+
+  ...
+  Ifto.log(<span class="hljs-string">'log entry 2'</span>);
+
+  ...
+  Ifto.log(<span class="hljs-string">'log entry 3'</span>);
+
+}</code></pre>
+			<h2 id="methods">Methods</h2>
 			<ul>
-				<li><p>You don&#39;t have to pass the context object here
-						*/
-						export async function handler(event: SQSEvent) {
-						...
-					Ifto.log(&#39;log entry 1&#39;);</p>
-					<p>...
-					Ifto.log(&#39;log entry 2&#39;);</p>
-					<p>...
-					Ifto.log(&#39;log entry 3&#39;);</p>
-				</li>
+				<li><h4 id="ifto-addlambdacontext-context-">Ifto.addLambdaContext(<code>context</code>);</h4>
+				set <code>Context</code> object passed to the lambda function.</li>
+				<li><h4 id="ifto-init-process-env-">Ifto.init(<code>process.env</code>);</h4>
+				Pass the <code>process.env</code> to read the environment variables defined.</li>
+				<li><h4 id="ifto-log-logmessage-">Ifto. log(<code>logMessage</code>);</h4>
+				Adds the log message, so in the case of <code>timeout</code>, this message will be flushed to the standard output.</li>
+				<li><h4 id="ifto-monitor-promise-">Ifto.monitor(<code>Promise</code>);</h4>
+				Accepts the handler function to in order to monitoring. (This won&#39;t change the <code>return values</code> or <code>errors thrown</code> buy the handler function).</li>
 			</ul>
-			<p>}</p>
-			<pre><code>
-## Methods
-* #### Ifto.addLambdaContext(```context```)<span class="hljs-comment">;</span>
-  set ```Context``` object passed to the lambda function.
-* #### Ifto.init(```process.env```)<span class="hljs-comment">;</span>
-  Pass the ```process.env``` to read the environment variables defined.
-* #### Ifto. log(```logMessage```)<span class="hljs-comment">;</span>
-  Adds the log message, so in the case of ```timeout```, this message will be flushed to the standard output.
-* #### Ifto.monitor(```Promise```)<span class="hljs-comment">;</span>
-  Accepts the handler function to in order to monitoring. (This won't change the ```return values``` <span class="hljs-literal">or</span> ```errors thrown``` buy the handler function).
-
-
-## Final output - (in case of ```Timeout error```)</code></pre><p>2019-01-20T11:27:26.578Z    ccbc1d49-3336-47c2-9d49-c1d47ffc23de
-				Expecting a possible lambda timeout.
-				Only 50 milliseconds remaining.
-				(If this is a false positive error, change value by setting up environment variable &quot;ifto_flush_when&quot;).
-				Current log:
-				2019-0-0T11:27:24.629 0: My lambda execution started.
-				2019-0-0T11:27:24.919 1: log entry 1
-				2019-0-0T11:27:24.956 2: log entry 2
-				2019-0-0T11:27:25.236 3: log entry 3
-			<code>`</code></p>
-			<h2 id="important-note">Important note</h2>
+			<h2 id="final-output-in-case-of-timeout-error-">Final output - (in case of <code>Timeout error</code>)</h2>
+			<pre><code><span class="hljs-number">2019</span><span class="hljs-number">-01</span><span class="hljs-number">-20</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">26.578</span>Z    ccbc1d49<span class="hljs-number">-3336</span><span class="hljs-number">-47</span>c2<span class="hljs-number">-9</span>d49-c1d47ffc23de
+Expecting a possible lambda timeout.
+Only <span class="hljs-number">50</span> milliseconds remaining.
+(If <span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> a <span class="hljs-literal">false</span> positive error, change value by setting up environment variable <span class="hljs-string">"ifto_flush_when"</span>).
+Current log:
+<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.629</span> <span class="hljs-number">0</span>: My lambda execution started.
+<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.919</span> <span class="hljs-number">1</span>: log entry <span class="hljs-number">1</span>
+<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.956</span> <span class="hljs-number">2</span>: log entry <span class="hljs-number">2</span>
+<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">25.236</span> <span class="hljs-number">3</span>: log entry <span class="hljs-number">3</span></code></pre><h2 id="important-note">Important note</h2>
 			<ul>
 				<li>The default of <code>ifto_flush_when</code> is <code>50</code> and it was decided by running couple of lambdas and printing <code>context.getRemainingTimeInMillis()</code> value. In case of <code>false positive</code> change this value.</li>
 				<li>I haven&#39;t run any analysis on <code>memory usage</code>.</li>
