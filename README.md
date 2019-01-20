@@ -12,6 +12,17 @@ async handler(event: SQSEvent, context: Context) {
   ...
 }
 ```
+## Configuration
+###### (Environment variables)
+* #### ifto_start
+     Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring.
+* #### ifto_flush_when
+     This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
+```text
+if context.getRemainingTimeInMillis() <= ifto_flush_when then
+     flush the logs to standard output
+end if
+```
 ## How to use it?
 Assume that you lambda is structured as follows.
 
@@ -71,4 +82,26 @@ export async function handler(event: SQSEvent) {
   Ifto.log('log entry 3');
 
 }
+```
+
+## Methods
+* #### Ifto.addLambdaContext(```context```);
+  set ```Context``` object passed to the lambda function.
+* #### Ifto.init(```process.env```);
+  Pass the ```process.env``` to read the environment variables defined.
+* #### Ifto. log(```logMessage```);
+  Adds the log message, so in the case of ```timeout```, this message will be flushed to the standard output.
+* #### Ifto.monitor(```Promise```);
+  Accepts the handler function to in order to monitoring. (This won't change the ```return values``` or ```errors thrown``` buy the handler function)
+
+## Final output - (in case of ```Timeout error```)
+```
+2019-01-20T11:27:26.578Z    ccbc1d49-3336-47c2-9d49-c1d47ffc23de
+Expecting a possible lambda timeout.
+Only 50 milliseconds remaining.
+(If this is a false positive error, change value by setting up environment variable "ifto_flush_when").
+Current log:
+2019-0-0T11:27:24.629 0: my lambda started
+2019-0-0T11:27:24.919 1: my handler executing
+2019-0-0T11:27:24.956 2: fetching external data
 ```
