@@ -27,24 +27,25 @@ Assume that you lambda is structured as follows.
  * Just import the Ifto module.
  * This will, create a Ifto in the "global" name space.
  * So other files can use Ifto module without creating a object
-*/
+ */
 import 'Ifto';
 import { Context, SQSEvent } from 'aws-lambda';
 import { handler } from './lib/handler';
 
 export async function myLambda(event: SQSEvent, context: Context) {
   Ifto
-  	.addLambdaContext(context) // Add the context module
-  	.init(process.env); // Add the process.env inorder to read the required configurations.
+    .addLambdaContext(context) // Add the context module
+    .init(process.env); // Add the process.env inorder to read the required configurations.
 
   // Use Ifto.log() to add log entry
   Ifto
-  	.log('My lambda execution started.');
+    .log('My lambda execution started.');
 
 
   // Use Ifto.monitor() function to start monitoring, if configured properly.
   return Ifto.monitor(
-  	handler(event) // Pass the handler function
+    // Pass the handler function
+    handler(event)
   );
 }
 ```
@@ -52,13 +53,13 @@ export async function myLambda(event: SQSEvent, context: Context) {
 ```ts
 /**
  * below import statement will required, only if you write individual unit tests for this file
-*/
+ */
 import 'Ifto';
 import { SQSEvent } from 'aws-lambda';
 
 /*
  * You don't have to pass the context object here
-*/
+ */
 export async function handler(event: SQSEvent) {
   ...
   Ifto.log('log entry 1');
