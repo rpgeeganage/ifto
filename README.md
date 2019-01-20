@@ -1,4 +1,7 @@
 # IFTO - If (Lambda) Timeout
+
+### TypeScript Doc: [https://rpgeeganage.github.io/ifto/doc/](https://rpgeeganage.github.io/ifto/doc/)
+
 The purpose of this module is to work as a debugging tool during a timeout. It is hard to debug when a lambda exit exists with ```Task timed out after 2.00 seconds```.
 
 * One solution is to increase the ```Timout``` value. Although this fixed the problem (sometimes), there is no guarantee that, a timeout may not occur again until proper debugging has done.
@@ -35,6 +38,7 @@ Assume that you lambda is structured as follows.
 ```
 * ##### modifications in ```index.ts```
 ```index.ts``` contains the expose the ```handler``` function.
+
 ```ts
 /**
  * Just import the Ifto module.
@@ -94,7 +98,7 @@ export async function handler(event: SQSEvent) {
 * #### Ifto. log(```logMessage```);
   Adds the log message, so in the case of ```timeout```, this message will be flushed to the standard output.
 * #### Ifto.monitor(```Promise```);
-  Accepts the handler function to in order to monitoring. (This won't change the ```return values``` or ```errors thrown``` buy the handler function)
+  Accepts the handler function to in order to monitoring. (This won't change the ```return values``` or ```errors thrown``` buy the handler function).
 
 ## Final output - (in case of ```Timeout error```)
 ```
