@@ -2,7 +2,7 @@ import 'mocha';
 import * as should from 'should';
 import { Ifto, start } from '../lib/';
 
-describe('Ifto', () => {
+describe('Ifto Index', () => {
   it('should attach to global object', () => {
     const globalObject = {};
     start(globalObject as any);

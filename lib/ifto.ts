@@ -273,7 +273,9 @@ export class Ifto {
     let interval: NodeJS.Timeout | undefined;
     if (this.allowedToMonitor && this.lambdaContext) {
       interval = setInterval(() => {
-        this.output(this.logEntries.join('\n'));
+        this.output(
+          `${this.getWarningString()}\n${this.logEntries.join('\n')}`
+        );
         this.clearMonitoringInterval(interval);
       }, this.lambdaContext.getRemainingTimeInMillis() - this.flushLogsWhenDifferenceLessThanMilliseconds);
     }
@@ -338,5 +340,20 @@ export class Ifto {
       s: date.getUTCSeconds(),
       ms: date.getUTCMilliseconds()
     };
+  }
+
+  /**
+   * Get the warning header
+   *
+   * @private
+   * @returns
+   * @memberof Ifto
+   */
+  private getWarningString() {
+    return `
+Expecting a possible lambda timeout.
+Only ${this.flushLogsWhenDifferenceLessThanMilliseconds} milliseconds remaining.
+(If this is a false positive error change the value by setting up the environment variable "${ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS}").
+Current log:`;
   }
 }
