@@ -42,7 +42,7 @@ end if
 ## How to use it?
 Assume that you lambda is structured as follows.
 
-```o
+```
 |-- index.ts
 `-- lib
     `-- handler.ts
