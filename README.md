@@ -110,4 +110,5 @@ Current log:
 ```
 ## Important note
 * The default of ```ifto_flush_when``` is ``50`` and it was decided by running couple of lambdas and printing ```context.getRemainingTimeInMillis()``` value. In case of ```false positive``` change this value.
-*
+* I haven't run any analysis on ``memory usage``.
+* I would thankfull to hear ``thoughts`` and ``bugs``.
