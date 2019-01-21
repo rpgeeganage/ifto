@@ -10,3 +10,5 @@ tslint.json
 .travis.yml
 yarn-error.log
 CODE_OF_CONDUCT.md
+coverage
+.nyc_output
