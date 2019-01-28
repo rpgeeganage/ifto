@@ -11,7 +11,7 @@
 
 The purpose of this module is to work as a debugging tool during a timeout. It is hard to debug when a lambda exit exists with ```Task timed out after 2.00 seconds```.
 
-* One solution is to increase the ```Timout``` value. Although this fixed the problem (sometimes), there is no guarantee that, a timeout may not occur again until proper debugging has done.
+* One solution is to increase the ```Timeout``` value. Although this fixed the problem (sometimes), there is no guarantee that, a timeout may not occur again until proper debugging has done.
 
 * Another solution is to a use a module like [```Debug```](https://www.npmjs.com/package/debug) and enable logging. The problem is this, will create log entries irrespective of the ```timeout```.
 
