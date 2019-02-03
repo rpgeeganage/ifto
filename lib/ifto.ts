@@ -1,4 +1,6 @@
 import { Context } from 'aws-lambda';
+import { Spy } from './spy_modules';
+import { formatedDate } from './util';
 
 /**
  * Function signature of the expected output function
@@ -242,15 +244,19 @@ export class Ifto {
    * @memberof Ifto
    */
   init(params: NodeJS.ProcessEnv) {
-    const envValue = params[ENV_VAR_MONITORING_START_NAME];
+    const envValue = params[ENV_VAR_MONITORING_START_NAME.toLowerCase()];
     this.allowedToMonitor = !!(
       envValue &&
       envValue.toLocaleLowerCase() === ENV_VAR_MONITORING_START_VALUE
     );
-    if (params[ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS]) {
+    if (
+      params[
+        ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS.toLowerCase()
+      ]
+    ) {
       const timeout = parseInt(
         params[
-          ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS
+          ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS.toLowerCase()
         ] as string,
         10
       );
@@ -272,9 +278,14 @@ export class Ifto {
   async monitor(handler: Promise<any>): Promise<any> {
     let interval: NodeJS.Timeout | undefined;
     if (this.allowedToMonitor && this.lambdaContext) {
+      const spy = Spy.getInstance(10);
+      spy.start();
       interval = setInterval(() => {
+        spy.stop();
         this.output(
-          `${this.getWarningString()}\n${this.logEntries.join('\n')}`
+          `${this.getWarningString()}\n${this.logEntries.join(
+            '\n'
+          )}\n${spy.printEntries()}`
         );
         this.clearMonitoringInterval(interval);
       }, this.lambdaContext.getRemainingTimeInMillis() - this.flushLogsWhenDifferenceLessThanMilliseconds);
@@ -315,31 +326,7 @@ export class Ifto {
    * @memberof Ifto
    */
   private getLogEntry(logArray: string[], entry: string) {
-    const date = this.getTime();
-    return `${date.y}-${date.mon}-${date.d}T${date.h}:${date.m}:${date.s}.${
-      date.ms
-    } ${logArray.length}: ${entry}`;
-  }
-
-  /**
-   * Get time value
-   *
-   * @private
-   * @returns { y: number, mon: number, d: number, h: number, m: number, s: number, ms: number}
-    }
-   * @memberof Ifto
-   */
-  private getTime() {
-    const date = new Date();
-    return {
-      y: date.getUTCFullYear(),
-      mon: date.getUTCMonth(),
-      d: date.getUTCDay(),
-      h: date.getUTCHours(),
-      m: date.getUTCMinutes(),
-      s: date.getUTCSeconds(),
-      ms: date.getUTCMilliseconds()
-    };
+    return `${formatedDate()} ${logArray.length}: ${entry}`;
   }
 
   /**
