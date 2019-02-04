@@ -100,7 +100,7 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  private request(arg1: any, arg2: any, cb: (a: any) => {}) {
+  private request(urlOrOptions: any, options: any, cb: (a: any) => {}) {
     if (!this.originalRequest) {
       throw new Error(
         'Unable locate the preserved request method from http module'
@@ -108,13 +108,13 @@ export class SpyHttp extends BaseModule {
     }
 
     const id = getId();
-    if (typeof arg1 === 'string') {
-      this.logs.add(id, arg1);
+    if (typeof urlOrOptions === 'string') {
+      this.logs.add(id, urlOrOptions);
     } else {
-      this.logs.add(id, arg1.href);
+      this.logs.add(id, urlOrOptions.href);
     }
 
-    return this.originalRequest(arg1, arg2, (...args) => {
+    return this.originalRequest(urlOrOptions, options, (...args) => {
       this.logs.remove(id);
       return cb(...args);
     });

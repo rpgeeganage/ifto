@@ -54,6 +54,16 @@ export class SizeRestrictedLog {
   }
 
   /**
+   * Remove given key from the log
+   *
+   * @param {string} key
+   * @memberof SizeRestrictedLog
+   */
+  remove(key: string) {
+    this.log = this.log.filter((l: LogEntry) => l.key !== key);
+  }
+
+  /**
    * Get stringified version of log
    *
    * @returns
@@ -81,15 +91,14 @@ export class SizeRestrictedLog {
   }
 
   /**
-   * Remove given key from the log
+   * Get log entries
    *
-   * @param {string} key
+   * @returns {LogEntry[]}
    * @memberof SizeRestrictedLog
    */
-  remove(key: string) {
-    this.log = this.log.filter((l: LogEntry) => l.key !== key);
+  getLogEntries(): LogEntry[] {
+    return this.log;
   }
-
   /**
    * Purge the log
    *
