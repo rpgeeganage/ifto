@@ -6,8 +6,16 @@ export interface Entries {
 }
 
 export abstract class BaseModule {
-  abstract start(): void;
-  abstract stop(): void;
-  abstract getRemark(): string;
-  abstract getEntries(): Entries;
+  static start() {
+    throw new Error('write your own implementation');
+  }
+  static stop() {
+    throw new Error('write your own implementation');
+  }
+  static getRemark(): string {
+    throw new Error('write your own implementation');
+  }
+  static getEntries(): Entries {
+    throw new Error('write your own implementation');
+  }
 }

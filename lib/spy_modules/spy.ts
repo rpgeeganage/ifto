@@ -1,10 +1,10 @@
-import { BaseModule } from './base_module';
+import { SizeRestrictedLog } from '../util';
+import { Entries } from './base_module';
 import { SpyHttp } from './spy_http';
 
 export class Spy {
-  private spies: BaseModule[] = [];
   constructor(logSize: number) {
-    this.spies.push(SpyHttp.getInstance(logSize));
+    SpyHttp.init(SizeRestrictedLog.getInstance(logSize));
   }
 
   static getInstance(logSize = 10) {
@@ -12,31 +12,30 @@ export class Spy {
   }
 
   start() {
-    this.spies.forEach((s: BaseModule) => {
-      s.start();
-    });
+    SpyHttp.start();
   }
 
   stop() {
-    this.spies.forEach((s: BaseModule) => {
-      s.stop();
-    });
+    SpyHttp.stop();
   }
 
   printEntries(): string {
-    return this.spies
-      .map((s: BaseModule) => {
-        const entries = s.getEntries();
-        return `
-      ******************
-      Spied module logs:
-      ******************
-      ${entries.module}
+    const op = [];
+    const entriesSpyHttp = SpyHttp.getEntries();
+    op.push(this.buildPrintOutput(entriesSpyHttp));
+    return `
+  ******************
+  Spied module logs:
+  ******************
+  ${op.join('')}`;
+  }
 
-      ${entries.remark}
-      ${entries.log.toString()}
-      `;
-      })
-      .join('');
+  private buildPrintOutput(entries: Entries) {
+    return `
+  ${entries.module}
+
+  ${entries.remark}
+  ${entries.log.toString()}
+  `;
   }
 }

@@ -7,29 +7,23 @@ export class SpyHttp extends BaseModule {
   /**
    * Logs from http call
    *
-   * @private
+   * @static
    * @type {SizeRestrictedLog}
    * @memberof SpyHttp
    */
-  private logs: SizeRestrictedLog;
+  static logs: SizeRestrictedLog;
 
   /**
    * Original Request method from http request
    *
-   * @private
+   * @static
    * @memberof SpyHttp
    */
-  private originalRequest?: (arg1: any, arg2: any, cb: (a: any) => {}) => {};
-
-  /**
-   * Creates an instance of SpyHttp.
-   * @param {number} logSize
-   * @memberof SpyHttp
-   */
-  constructor(logSize: number) {
-    super();
-    this.logs = SizeRestrictedLog.getInstance(logSize);
-  }
+  static originalRequest?: (
+    arg1: any,
+    arg2: any,
+    cb: (...a: any) => void
+  ) => {};
 
   /**
    * Get instance of Spy
@@ -39,8 +33,10 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  static getInstance(logSize: number) {
-    return new SpyHttp(logSize);
+  static init(logs: SizeRestrictedLog) {
+    SpyHttp.logs = logs;
+    SpyHttp.stop();
+    SpyHttp.originalRequest = undefined;
   }
 
   /**
@@ -48,9 +44,9 @@ export class SpyHttp extends BaseModule {
    *
    * @memberof SpyHttp
    */
-  start() {
-    this.originalRequest = http.request;
-    http.request = this.request;
+  static start() {
+    SpyHttp.originalRequest = http.request;
+    http.request = SpyHttp.request;
   }
 
   /**
@@ -58,9 +54,9 @@ export class SpyHttp extends BaseModule {
    *
    * @memberof SpyHttp
    */
-  stop() {
-    if (this.originalRequest) {
-      http.request = this.originalRequest;
+  static stop() {
+    if (SpyHttp.originalRequest) {
+      http.request = SpyHttp.originalRequest;
     }
   }
 
@@ -70,11 +66,11 @@ export class SpyHttp extends BaseModule {
    * @returns {Entries}
    * @memberof SpyHttp
    */
-  getEntries(): Entries {
+  static getEntries(): Entries {
     return {
       module: 'http',
-      remark: this.getRemark(),
-      log: this.logs
+      remark: SpyHttp.getRemark(),
+      log: SpyHttp.logs
     };
   }
 
@@ -84,7 +80,7 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  getRemark() {
+  static getRemark() {
     return 'Possible unfinished HTTP requests';
   }
 
@@ -100,8 +96,8 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  private request(urlOrOptions: any, options: any, cb: (a: any) => {}) {
-    if (!this.originalRequest) {
+  static request(urlOrOptions: any, options: any, cb: (...args: any) => {}) {
+    if (!SpyHttp.originalRequest) {
       throw new Error(
         'Unable locate the preserved request method from http module'
       );
@@ -109,14 +105,24 @@ export class SpyHttp extends BaseModule {
 
     const id = getId();
     if (typeof urlOrOptions === 'string') {
-      this.logs.add(id, urlOrOptions);
+      SpyHttp.logs.add(id, urlOrOptions);
     } else {
-      this.logs.add(id, urlOrOptions.href);
+      SpyHttp.logs.add(id, urlOrOptions.href);
     }
 
-    return this.originalRequest(urlOrOptions, options, (...args) => {
-      this.logs.remove(id);
-      return cb(...args);
-    });
+    const clientRequest = SpyHttp.originalRequest(
+      urlOrOptions,
+      options,
+      cb
+    ) as any;
+
+    // Backing up the original finish request
+    const originalFinish = clientRequest._finish;
+    clientRequest._finish = () => {
+      SpyHttp.logs.remove(id);
+      return originalFinish.apply(clientRequest);
+    };
+
+    return clientRequest;
   }
 }
