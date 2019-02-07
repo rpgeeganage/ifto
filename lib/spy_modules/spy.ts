@@ -3,7 +3,7 @@ import { Entries } from './base_module';
 import { SpyHttp } from './spy_http';
 
 export class Spy {
-  constructor(logSize: number) {
+  constructor(readonly logSize: number) {
     SpyHttp.init(SizeRestrictedLog.getInstance(logSize));
   }
 

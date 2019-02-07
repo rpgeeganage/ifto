@@ -25,7 +25,7 @@ export class SizeRestrictedLog {
    * @param {number} size
    * @memberof SizeRestrictedLog
    */
-  constructor(private readonly size: number) {}
+  constructor(public readonly size: number) {}
 
   /**
    * Get an instance of SizeRestrictedLog

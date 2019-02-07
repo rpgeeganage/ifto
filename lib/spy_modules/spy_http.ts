@@ -26,6 +26,14 @@ export class SpyHttp extends BaseModule {
   ) => {};
 
   /**
+   * Original Get method from http request
+   *
+   * @static
+   * @memberof SpyHttp
+   */
+  static originalGet?: (arg1: any, arg2: any, cb: (...a: any) => void) => {};
+
+  /**
    * Get instance of Spy
    *
    * @static
@@ -37,6 +45,7 @@ export class SpyHttp extends BaseModule {
     SpyHttp.logs = logs;
     SpyHttp.stop();
     SpyHttp.originalRequest = undefined;
+    SpyHttp.originalGet = undefined;
   }
 
   /**
@@ -45,8 +54,11 @@ export class SpyHttp extends BaseModule {
    * @memberof SpyHttp
    */
   static start() {
+    SpyHttp.stop();
     SpyHttp.originalRequest = http.request;
-    http.request = SpyHttp.request;
+    SpyHttp.originalGet = http.get;
+    http.request = SpyHttp.proxyRequest;
+    http.get = SpyHttp.proxyGet;
   }
 
   /**
@@ -57,6 +69,10 @@ export class SpyHttp extends BaseModule {
   static stop() {
     if (SpyHttp.originalRequest) {
       http.request = SpyHttp.originalRequest;
+    }
+
+    if (SpyHttp.originalGet) {
+      http.get = SpyHttp.originalGet;
     }
   }
 
@@ -96,13 +112,62 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  static request(urlOrOptions: any, options: any, cb: (...args: any) => {}) {
+  static proxyRequest(
+    urlOrOptions: any,
+    options: any,
+    cb: (...args: any) => {}
+  ) {
     if (!SpyHttp.originalRequest) {
       throw new Error(
         'Unable locate the preserved request method from http module'
       );
     }
 
+    const id = SpyHttp.addLogEntry(urlOrOptions);
+    const clientRequest = SpyHttp.originalRequest(
+      urlOrOptions,
+      options,
+      cb
+    ) as any;
+
+    return SpyHttp.proxyFinish(id, clientRequest);
+  }
+
+  /**
+   * Proxy request method
+   *
+   * function request(options: RequestOptions | string | URL, callback?: (res: IncomingMessage) => void): ClientRequest;
+   * function request(url: string | URL, options: RequestOptions, callback?: (res: IncomingMessage) => void): ClientRequest;
+   * @private
+   * @param {*} arg1
+   * @param {*} arg2
+   * @param {(a: any) => {}} cb
+   * @returns
+   * @memberof SpyHttp
+   */
+  static proxyGet(urlOrOptions: any, options: any, cb: (...args: any) => {}) {
+    if (!SpyHttp.originalGet) {
+      throw new Error(
+        'Unable locate the preserved Get method from http module'
+      );
+    }
+
+    const id = SpyHttp.addLogEntry(urlOrOptions);
+
+    const clientRequest = SpyHttp.originalGet(urlOrOptions, options, cb) as any;
+
+    return SpyHttp.proxyFinish(id, clientRequest);
+  }
+
+  /**
+   * Add a new log entry and return the id of the log
+   *
+   * @static
+   * @param {*} urlOrOptions
+   * @returns
+   * @memberof SpyHttp
+   */
+  static addLogEntry(urlOrOptions: any) {
     const id = getId();
     if (typeof urlOrOptions === 'string') {
       SpyHttp.logs.add(id, urlOrOptions);
@@ -110,13 +175,19 @@ export class SpyHttp extends BaseModule {
       SpyHttp.logs.add(id, urlOrOptions.href);
     }
 
-    const clientRequest = SpyHttp.originalRequest(
-      urlOrOptions,
-      options,
-      cb
-    ) as any;
+    return id;
+  }
 
-    // Backing up the original finish request
+  /**
+   * Proxy finish method for Http stream
+   *
+   * @static
+   * @param {string} id
+   * @param {*} clientRequest
+   * @returns
+   * @memberof SpyHttp
+   */
+  static proxyFinish(id: string, clientRequest: any) {
     const originalFinish = clientRequest._finish;
     clientRequest._finish = () => {
       SpyHttp.logs.remove(id);
