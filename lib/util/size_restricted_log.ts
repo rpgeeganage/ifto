@@ -99,6 +99,7 @@ export class SizeRestrictedLog {
   getLogEntries(): LogEntry[] {
     return this.log;
   }
+
   /**
    * Purge the log
    *
