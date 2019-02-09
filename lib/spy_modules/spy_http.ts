@@ -2,6 +2,7 @@ import { SizeRestrictedLog, getId } from '../util';
 import { BaseModule, Entries } from './base_module';
 
 const http = require('http');
+const https = require('https');
 
 export class SpyHttp extends BaseModule {
   /**
@@ -19,11 +20,15 @@ export class SpyHttp extends BaseModule {
    * @static
    * @memberof SpyHttp
    */
-  static originalRequest?: (
-    arg1: any,
-    arg2: any,
-    cb: (...a: any) => void
-  ) => {};
+  static originalRequest?: (...args: any[]) => {};
+
+  /**
+   * Original Request method from https request
+   *
+   * @static
+   * @memberof SpyHttp
+   */
+  static originalRequestSecure?: (...args: any[]) => {};
 
   /**
    * Original Get method from http request
@@ -43,8 +48,11 @@ export class SpyHttp extends BaseModule {
    */
   static init(logs: SizeRestrictedLog) {
     SpyHttp.logs = logs;
+
     SpyHttp.stop();
+
     SpyHttp.originalRequest = undefined;
+    SpyHttp.originalRequestSecure = undefined;
     SpyHttp.originalGet = undefined;
   }
 
@@ -55,9 +63,13 @@ export class SpyHttp extends BaseModule {
    */
   static start() {
     SpyHttp.stop();
+
     SpyHttp.originalRequest = http.request;
+    SpyHttp.originalRequestSecure = https.request;
     SpyHttp.originalGet = http.get;
+
     http.request = SpyHttp.proxyRequest;
+    https.request = SpyHttp.proxyHttpsRequest;
     http.get = SpyHttp.proxyGet;
   }
 
@@ -69,6 +81,10 @@ export class SpyHttp extends BaseModule {
   static stop() {
     if (SpyHttp.originalRequest) {
       http.request = SpyHttp.originalRequest;
+    }
+
+    if (SpyHttp.originalRequestSecure) {
+      https.request = SpyHttp.originalRequestSecure;
     }
 
     if (SpyHttp.originalGet) {
@@ -112,25 +128,37 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  static proxyRequest(
-    urlOrOptions: any,
-    options: any,
-    cb: (...args: any) => {}
-  ) {
+  static proxyRequest(...args: any[]) {
     if (!SpyHttp.originalRequest) {
       throw new Error(
         'Unable locate the preserved request method from http module'
       );
     }
 
+    const urlOrOptions = args[0];
     const id = SpyHttp.addLogEntry(urlOrOptions);
-    const clientRequest = SpyHttp.originalRequest(
-      urlOrOptions,
-      options,
-      cb
-    ) as any;
+    const clientRequest = SpyHttp.originalRequest(...args) as any;
 
     return SpyHttp.proxyFinish(id, clientRequest);
+  }
+
+  /**
+   * Proxy https request method
+   * @private
+   * @param {*} arg1
+   * @param {*} arg2
+   * @param {(a: any) => {}} cb
+   * @returns
+   * @memberof SpyHttp
+   */
+  static proxyHttpsRequest(...args: any[]) {
+    if (!SpyHttp.originalRequestSecure) {
+      throw new Error(
+        'Unable locate the preserved request method from https module'
+      );
+    }
+
+    return SpyHttp.originalRequestSecure(...args);
   }
 
   /**
@@ -171,8 +199,13 @@ export class SpyHttp extends BaseModule {
     const id = getId();
     if (typeof urlOrOptions === 'string') {
       SpyHttp.logs.add(id, urlOrOptions);
-    } else {
+    } else if (urlOrOptions.href) {
       SpyHttp.logs.add(id, urlOrOptions.href);
+    } else {
+      const url = `${urlOrOptions.protocol}//${urlOrOptions.hostname}${
+        urlOrOptions.port ? ':' + urlOrOptions.port : ''
+      }${urlOrOptions.path}`;
+      SpyHttp.logs.add(id, url);
     }
 
     return id;
