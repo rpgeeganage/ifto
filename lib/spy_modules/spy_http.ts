@@ -135,11 +135,13 @@ export class SpyHttp extends BaseModule {
       );
     }
 
+    const id = SpyHttp.addLogEntry(args[0]);
+
     const clientRequest = SpyHttp.originalRequest(
-      ...SpyHttp.getMockedRequestArgs(...args)
+      ...SpyHttp.getMockedRequestArgs(id, ...args)
     );
 
-    return SpyHttp.handleClientRequest(args[0], clientRequest);
+    return SpyHttp.handleClientRequest(id, clientRequest);
   }
 
   /**
@@ -159,10 +161,10 @@ export class SpyHttp extends BaseModule {
     }
 
     const clientRequest = SpyHttp.originalRequestSecure(
-      ...SpyHttp.getMockedRequestArgs(...args)
+      ...SpyHttp.getMockedRequestArgs(null, ...args)
     );
 
-    return SpyHttp.handleClientRequest(args[0], clientRequest);
+    return SpyHttp.handleClientRequest(null, clientRequest);
   }
 
   /**
@@ -184,11 +186,13 @@ export class SpyHttp extends BaseModule {
       );
     }
 
+    const id = SpyHttp.addLogEntry(args[0]);
+
     const clientRequest = SpyHttp.originalGet(
-      ...SpyHttp.getMockedRequestArgs(...args)
+      ...SpyHttp.getMockedRequestArgs(id, ...args)
     );
 
-    return SpyHttp.handleClientRequest(args[0], clientRequest);
+    return SpyHttp.handleClientRequest(id, clientRequest);
   }
 
   /**
@@ -199,12 +203,15 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  static getMockedRequestArgs(...args: any[]) {
+  static getMockedRequestArgs(id: any, ...args: any[]) {
     if (args.length === 1) {
       return args;
     }
-    const urlOrOptions = args[0];
-    const id = SpyHttp.addLogEntry(urlOrOptions);
+
+    if (typeof args[args.length - 1] !== 'function') {
+      return args;
+    }
+
     const cb = args[args.length - 1];
 
     const fakeCb = (err: any, res: any, body: any) => {
@@ -227,9 +234,7 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  static handleClientRequest(urlOrOptions: any, clientRequest: any) {
-    const id = SpyHttp.addLogEntry(urlOrOptions);
-
+  static handleClientRequest(id: any, clientRequest: any) {
     clientRequest.on('response', () => {
       const currentId = id;
       SpyHttp.logs.remove(currentId);

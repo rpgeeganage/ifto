@@ -67,10 +67,10 @@ export class Spy {
 
   private buildPrintOutput(entries: Entries) {
     return `
-  ${entries.module}
+${entries.module}
 
-  ${entries.remark}
-  ${entries.log.toString()}
-  `;
+${entries.remark}
+${entries.log.toString()}
+`;
   }
 }
