@@ -357,6 +357,6 @@ Current log:`;
    * @memberof Ifto
    */
   private getValueFromProcessEnv(params: NodeJS.ProcessEnv, valueKey: string) {
-    return params[valueKey] || params[valueKey.toLowerCase()];
+    return params[valueKey] || params[valueKey.toUpperCase()];
   }
 }
