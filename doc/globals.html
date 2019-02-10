@@ -925,7 +925,7 @@ img { max-width: 100%; }
 			<h3 id="typescript-doc-https-rpgeeganage-github-io-ifto-doc-">TypeScript Doc: <a href="https://rpgeeganage.github.io/ifto/doc/">https://rpgeeganage.github.io/ifto/doc/</a></h3>
 			<p>The purpose of this module is to work as a debugging tool during a timeout. It is hard to debug when a lambda exit exists with <code>Task timed out after 2.00 seconds</code>.</p>
 			<ul>
-				<li><p>One solution is to increase the <code>Timout</code> value. Although this fixed the problem (sometimes), there is no guarantee that, a timeout may not occur again until proper debugging has done.</p>
+				<li><p>One solution is to increase the <code>Timeout</code> value. Although this fixed the problem (sometimes), there is no guarantee that, a timeout may not occur again until proper debugging has done.</p>
 				</li>
 				<li><p>Another solution is to a use a module like <a href="https://www.npmjs.com/package/debug"><code>Debug</code></a> and enable logging. The problem is this, will create log entries irrespective of the <code>timeout</code>.</p>
 				</li>
@@ -938,11 +938,11 @@ img { max-width: 100%; }
 			<h2 id="configuration">Configuration</h2>
 			<h6 id="-environment-variables-">(Environment variables)</h6>
 			<ul>
-				<li><strong>ifto_start</strong></li>
+				<li><strong>ifto_start</strong> or <strong>IFTO_START</strong></li>
 			</ul>
 			<p>Please set the <code>ifto_start</code> as <code>true</code> in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)</p>
 			<ul>
-				<li><strong>ifto_flush_when</strong></li>
+				<li><strong>ifto_flush_when</strong> or <strong>IFTO_FLUSH_WHEN</strong></li>
 			</ul>
 			<p>This indicates the <code>minimum</code> number of <code>milliseconds</code> remaining in <code>context.getRemainingTimeInMillis()</code>, before flushing the logs to the output. (default setting is to write using <code>console.log</code>). See the below.</p>
 			<p>   (Default value is <strong><em>50</em></strong>)</p>
@@ -1023,7 +1023,38 @@ Current log:
 <span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.629</span> <span class="hljs-number">0</span>: My lambda execution started.
 <span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.919</span> <span class="hljs-number">1</span>: log entry <span class="hljs-number">1</span>
 <span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">24.956</span> <span class="hljs-number">2</span>: log entry <span class="hljs-number">2</span>
-<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">25.236</span> <span class="hljs-number">3</span>: log entry <span class="hljs-number">3</span></code></pre><h2 id="important-note">Important note</h2>
+<span class="hljs-number">2019</span><span class="hljs-number">-0</span><span class="hljs-number">-0</span>T11:<span class="hljs-number">27</span>:<span class="hljs-number">25.236</span> <span class="hljs-number">3</span>: log entry <span class="hljs-number">3</span></code></pre><h2 id="spy-modules">Spy modules</h2>
+			<p>These modules are used to spy on operations which can take more execution time.
+			Currently I have added a <code>HTTP / HTTPS</code> spy module.</p>
+			<h3 id="http-https-spy-module">HTTP / HTTPS spy module</h3>
+			<p>This module keeps track and output the <code>url</code> of any <code>http or https request</code> which is not complete at the time of flushing the logs.</p>
+			<h3 id="output-with-spy-modules">Output with spy modules</h3>
+			<pre><code>START RequestId: <span class="hljs-number">55</span>ca052e<span class="hljs-number">-45</span>ae<span class="hljs-number">-49</span>c5<span class="hljs-number">-89</span>ef-bd1e5bfb0abf Version: $LATEST
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T16:<span class="hljs-number">24</span>:<span class="hljs-number">45.737</span>Z    <span class="hljs-number">55</span>ca052e<span class="hljs-number">-45</span>ae<span class="hljs-number">-49</span>c5<span class="hljs-number">-89</span>ef-bd1e5bfb0abf
+Expecting a possible lambda timeout.
+Only <span class="hljs-number">50</span> milliseconds remaining.
+(If <span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> a <span class="hljs-literal">false</span> positive error change the value by setting up the environment variable <span class="hljs-string">"ifto_flush_when"</span>).
+Current log:
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">43.41</span> <span class="hljs-number">0</span>: Handler entry
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">43.53</span> <span class="hljs-number">1</span>: GarbageCollector getInstance
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">43.54</span> <span class="hljs-number">2</span>: GarbageCollector collect
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">45.35</span> <span class="hljs-number">3</span>: runLong collect
+
+******************
+Spied module logs:
+******************
+
+http
+
+Possible unfinished HTTP requests
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">45.53</span> https:<span class="hljs-comment">//ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-004</span>
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">45.41</span> https:<span class="hljs-comment">//ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-003</span>
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">45.40</span> https:<span class="hljs-comment">//ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-002</span>
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T17:<span class="hljs-number">24</span>:<span class="hljs-number">45.38</span> https:<span class="hljs-comment">//ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-001</span>
+
+END RequestId: <span class="hljs-number">55</span>ca052e<span class="hljs-number">-45</span>ae<span class="hljs-number">-49</span>c5<span class="hljs-number">-89</span>ef-bd1e5bfb0abf
+REPORT RequestId: <span class="hljs-number">55</span>ca052e<span class="hljs-number">-45</span>ae<span class="hljs-number">-49</span>c5<span class="hljs-number">-89</span>ef-bd1e5bfb0abf    Duration: <span class="hljs-number">3003.15</span> ms    Billed Duration: <span class="hljs-number">3000</span> ms     Memory Size: <span class="hljs-number">512</span> MB    Max Memory Used: <span class="hljs-number">226</span> MB
+<span class="hljs-number">2019</span><span class="hljs-number">-02</span><span class="hljs-number">-10</span>T16:<span class="hljs-number">24</span>:<span class="hljs-number">45.789</span>Z <span class="hljs-number">55</span>ca052e<span class="hljs-number">-45</span>ae<span class="hljs-number">-49</span>c5<span class="hljs-number">-89</span>ef-bd1e5bfb0abf Task timed <span class="hljs-keyword">out</span> after <span class="hljs-number">3.00</span> seconds</code></pre><h2 id="important-note">Important note</h2>
 			<ul>
 				<li>The default of <code>ifto_flush_when</code> is <code>50</code> and it was decided by running couple of lambdas and printing <code>context.getRemainingTimeInMillis()</code> value. In case of <code>false positive</code> change this value.</li>
 				<li>I haven&#39;t run any analysis on <code>memory usage</code>.</li>
@@ -1039,6 +1070,12 @@ Current log:
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-external-module"><a href="modules/_ifto_.html" class="tsd-kind-icon">"ifto"</a></li>
 							<li class="tsd-kind-external-module"><a href="modules/_index_.html" class="tsd-kind-icon">"index"</a></li>
+							<li class="tsd-kind-external-module"><a href="modules/_spy_modules_base_module_.html" class="tsd-kind-icon">"spy_<wbr>modules/base_<wbr>module"</a></li>
+							<li class="tsd-kind-external-module"><a href="modules/_spy_modules_index_.html" class="tsd-kind-icon">"spy_<wbr>modules/index"</a></li>
+							<li class="tsd-kind-external-module"><a href="modules/_spy_modules_spy_.html" class="tsd-kind-icon">"spy_<wbr>modules/spy"</a></li>
+							<li class="tsd-kind-external-module"><a href="modules/_spy_modules_spy_http_.html" class="tsd-kind-icon">"spy_<wbr>modules/spy_<wbr>http"</a></li>
+							<li class="tsd-kind-external-module"><a href="modules/_util_index_.html" class="tsd-kind-icon">"util/index"</a></li>
+							<li class="tsd-kind-external-module"><a href="modules/_util_size_restricted_log_.html" class="tsd-kind-icon">"util/size_<wbr>restricted_<wbr>log"</a></li>
 						</ul>
 					</section>
 				</div>
