@@ -244,22 +244,25 @@ export class Ifto {
    * @memberof Ifto
    */
   init(params: NodeJS.ProcessEnv) {
-    const envValue = params[ENV_VAR_MONITORING_START_NAME.toLowerCase()];
+    // Initializing the monitoring flag
+    const envValue = this.getValueFromProcessEnv(
+      params,
+      ENV_VAR_MONITORING_START_NAME
+    );
+
     this.allowedToMonitor = !!(
       envValue &&
       envValue.toLocaleLowerCase() === ENV_VAR_MONITORING_START_VALUE
     );
-    if (
-      params[
-        ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS.toLowerCase()
-      ]
-    ) {
-      const timeout = parseInt(
-        params[
-          ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS.toLowerCase()
-        ] as string,
-        10
-      );
+
+    // Initializing flush time value
+    const flushTimeValue = this.getValueFromProcessEnv(
+      params,
+      ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS
+    );
+
+    if (flushTimeValue) {
+      const timeout = parseInt(flushTimeValue as string, 10);
       if (!isNaN(timeout)) {
         this.flushLogsWhenDifferenceLessThanMilliseconds = timeout;
       }
@@ -342,5 +345,18 @@ Expecting a possible lambda timeout.
 Only ${this.flushLogsWhenDifferenceLessThanMilliseconds} milliseconds remaining.
 (If this is a false positive error change the value by setting up the environment variable "${ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS}").
 Current log:`;
+  }
+
+  /**
+   * try to extract lower case or upper case values
+   *
+   * @private
+   * @param {NodeJS.ProcessEnv} params
+   * @param {string} valueKey
+   * @returns
+   * @memberof Ifto
+   */
+  private getValueFromProcessEnv(params: NodeJS.ProcessEnv, valueKey: string) {
+    return params[valueKey] || params[valueKey.toLowerCase()];
   }
 }
