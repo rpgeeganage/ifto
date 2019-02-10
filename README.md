@@ -134,10 +134,9 @@ Current log:
 
 ## Spy modules
 These modules are used to spy on operations which can take more execution time.
-Currently I have added a ```HTTP / HTTPS``` spy module.
 
 ### HTTP / HTTPS spy module
-This module keeps track and output the ```url``` of any ```http or https request``` which is not complete at the time of flushing the logs.
+This module keeps track **(most recent 10)** and outputs the ```URL``` of an ```HTTP``` or ```HTTPS``` request which is not complete at the time of flushing the logs.
 
 ### Output with spy modules
 ```
