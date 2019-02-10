@@ -18,7 +18,7 @@ describe('Ifto', () => {
           await req.get('http://foobar/');
         } catch (err) {}
         const args = log.add.args[0];
-        should(log.add.calledOnce).be.true();
+        should(log.add.called).be.true();
         should(args[0]).match(/^\w+$/);
         should(args[1]).eql('http://foobar/');
       });
@@ -28,9 +28,9 @@ describe('Ifto', () => {
         SpyHttp.init(log as any);
         SpyHttp.start();
         try {
-          await req.get('http://foobar/');
+          await req.get('http://google.com/');
         } catch (err) {}
-        should(log.remove.calledOnce).be.true();
+        should(log.remove.called).be.true();
         const addArgs = log.add.args[0];
         const removeArgs = log.remove.args[0];
         should(removeArgs[0]).eql(addArgs[0]);
@@ -42,7 +42,7 @@ describe('Ifto', () => {
         SpyHttp.start();
         http.get('http://google.com/', () => {
           const args = log.add.args[0];
-          should(log.add.calledOnce).be.true();
+          should(log.add.called).be.true();
           should(args[0]).match(/^\w+$/);
           should(args[1]).eql('http://google.com/');
 
@@ -55,7 +55,7 @@ describe('Ifto', () => {
         SpyHttp.init(log as any);
         SpyHttp.start();
         http.get('http://google.com/', () => {
-          should(log.remove.calledOnce).be.true();
+          should(log.remove.called).be.true();
           const addArgs = log.add.args[0];
           const removeArgs = log.remove.args[0];
           should(removeArgs[0]).eql(addArgs[0]);
@@ -75,7 +75,7 @@ describe('Ifto', () => {
           });
         } catch (err) {}
         const args = log.add.args[0];
-        should(log.add.calledOnce).be.true();
+        should(log.add.called).be.true();
         should(args[0]).match(/^\w+$/);
         should(args[1]).eql('http://foobar/');
       });

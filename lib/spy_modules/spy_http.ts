@@ -36,7 +36,7 @@ export class SpyHttp extends BaseModule {
    * @static
    * @memberof SpyHttp
    */
-  static originalGet?: (arg1: any, arg2: any, cb: (...a: any) => void) => {};
+  static originalGet?: (...args: any[]) => {};
 
   /**
    * Get instance of Spy
@@ -135,11 +135,11 @@ export class SpyHttp extends BaseModule {
       );
     }
 
-    const urlOrOptions = args[0];
-    const id = SpyHttp.addLogEntry(urlOrOptions);
-    const clientRequest = SpyHttp.originalRequest(...args) as any;
+    const clientRequest = SpyHttp.originalRequest(
+      ...SpyHttp.getMockedRequestArgs(...args)
+    );
 
-    return SpyHttp.proxyFinish(id, clientRequest);
+    return SpyHttp.handleClientRequest(args[0], clientRequest);
   }
 
   /**
@@ -173,18 +173,66 @@ export class SpyHttp extends BaseModule {
    * @returns
    * @memberof SpyHttp
    */
-  static proxyGet(urlOrOptions: any, options: any, cb: (...args: any) => {}) {
+  static proxyGet(...args: any[]) {
     if (!SpyHttp.originalGet) {
       throw new Error(
         'Unable locate the preserved Get method from http module'
       );
     }
 
+    return SpyHttp.originalGet(...SpyHttp.getMockedRequestArgs(...args));
+  }
+
+  /**
+   * Get Modified arguments with fake cb
+   *
+   * @static
+   * @param {...any[]} args
+   * @returns
+   * @memberof SpyHttp
+   */
+  static getMockedRequestArgs(...args: any[]) {
+    if (args.length === 1) {
+      return args;
+    }
+    const urlOrOptions = args[0];
+    const id = SpyHttp.addLogEntry(urlOrOptions);
+    const cb = args[args.length - 1];
+
+    const fakeCb = (err: any, res: any, body: any) => {
+      const currentId = id;
+      SpyHttp.logs.remove(currentId);
+      return cb(err, res, body);
+    };
+
+    args[args.length - 1] = fakeCb;
+
+    return args;
+  }
+
+  /**
+   * Handles http stream
+   *
+   * @static
+   * @param {*} urlOrOptions
+   * @param {*} clientRequest
+   * @returns
+   * @memberof SpyHttp
+   */
+  static handleClientRequest(urlOrOptions: any, clientRequest: any) {
     const id = SpyHttp.addLogEntry(urlOrOptions);
 
-    const clientRequest = SpyHttp.originalGet(urlOrOptions, options, cb) as any;
+    clientRequest.on('response', () => {
+      const currentId = id;
+      SpyHttp.logs.remove(currentId);
+    });
 
-    return SpyHttp.proxyFinish(id, clientRequest);
+    clientRequest.on('error', (error: any) => {
+      const currentId = id;
+      SpyHttp.logs.remove(currentId);
+    });
+
+    return clientRequest;
   }
 
   /**
@@ -209,24 +257,5 @@ export class SpyHttp extends BaseModule {
     }
 
     return id;
-  }
-
-  /**
-   * Proxy finish method for Http stream
-   *
-   * @static
-   * @param {string} id
-   * @param {*} clientRequest
-   * @returns
-   * @memberof SpyHttp
-   */
-  static proxyFinish(id: string, clientRequest: any) {
-    const originalFinish = clientRequest._finish;
-    clientRequest._finish = () => {
-      SpyHttp.logs.remove(id);
-      return originalFinish.apply(clientRequest);
-    };
-
-    return clientRequest;
   }
 }
