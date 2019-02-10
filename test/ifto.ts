@@ -100,8 +100,8 @@ describe('Ifto', () => {
         .log(logEntry1)
         .log(logEntry2)
         .getLogEntries();
-      should(iftoLog[0]).eql(`2019-0-0T5:53:45.847 0: ${logEntry1}`);
-      should(iftoLog[1]).eql(`2019-0-0T5:53:45.847 1: ${logEntry2}`);
+      should(iftoLog[0]).eql(`2019-01-20T06:53:45.847 0: ${logEntry1}`);
+      should(iftoLog[1]).eql(`2019-01-20T06:53:45.847 1: ${logEntry2}`);
       sinon.restore();
     });
   });

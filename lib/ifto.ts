@@ -1,4 +1,6 @@
 import { Context } from 'aws-lambda';
+import { Spy } from './spy_modules';
+import { formatedDate } from './util';
 
 /**
  * Function signature of the expected output function
@@ -242,18 +244,25 @@ export class Ifto {
    * @memberof Ifto
    */
   init(params: NodeJS.ProcessEnv) {
-    const envValue = params[ENV_VAR_MONITORING_START_NAME];
+    // Initializing the monitoring flag
+    const envValue = this.getValueFromProcessEnv(
+      params,
+      ENV_VAR_MONITORING_START_NAME
+    );
+
     this.allowedToMonitor = !!(
       envValue &&
       envValue.toLocaleLowerCase() === ENV_VAR_MONITORING_START_VALUE
     );
-    if (params[ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS]) {
-      const timeout = parseInt(
-        params[
-          ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS
-        ] as string,
-        10
-      );
+
+    // Initializing flush time value
+    const flushTimeValue = this.getValueFromProcessEnv(
+      params,
+      ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS
+    );
+
+    if (flushTimeValue) {
+      const timeout = parseInt(flushTimeValue as string, 10);
       if (!isNaN(timeout)) {
         this.flushLogsWhenDifferenceLessThanMilliseconds = timeout;
       }
@@ -272,9 +281,14 @@ export class Ifto {
   async monitor(handler: Promise<any>): Promise<any> {
     let interval: NodeJS.Timeout | undefined;
     if (this.allowedToMonitor && this.lambdaContext) {
+      const spy = Spy.getInstance(10);
+      spy.start();
       interval = setInterval(() => {
+        spy.stop();
         this.output(
-          `${this.getWarningString()}\n${this.logEntries.join('\n')}`
+          `${this.getWarningString()}\n${this.logEntries.join(
+            '\n'
+          )}\n${spy.printEntries()}`
         );
         this.clearMonitoringInterval(interval);
       }, this.lambdaContext.getRemainingTimeInMillis() - this.flushLogsWhenDifferenceLessThanMilliseconds);
@@ -315,31 +329,7 @@ export class Ifto {
    * @memberof Ifto
    */
   private getLogEntry(logArray: string[], entry: string) {
-    const date = this.getTime();
-    return `${date.y}-${date.mon}-${date.d}T${date.h}:${date.m}:${date.s}.${
-      date.ms
-    } ${logArray.length}: ${entry}`;
-  }
-
-  /**
-   * Get time value
-   *
-   * @private
-   * @returns { y: number, mon: number, d: number, h: number, m: number, s: number, ms: number}
-    }
-   * @memberof Ifto
-   */
-  private getTime() {
-    const date = new Date();
-    return {
-      y: date.getUTCFullYear(),
-      mon: date.getUTCMonth(),
-      d: date.getUTCDay(),
-      h: date.getUTCHours(),
-      m: date.getUTCMinutes(),
-      s: date.getUTCSeconds(),
-      ms: date.getUTCMilliseconds()
-    };
+    return `${formatedDate()} ${logArray.length}: ${entry}`;
   }
 
   /**
@@ -355,5 +345,18 @@ Expecting a possible lambda timeout.
 Only ${this.flushLogsWhenDifferenceLessThanMilliseconds} milliseconds remaining.
 (If this is a false positive error change the value by setting up the environment variable "${ENV_VAR_FLUSH_LOGS_WHEN_DIFFERENCE_LESS_THAN_MILLISECONDS}").
 Current log:`;
+  }
+
+  /**
+   * try to extract lower case or upper case values
+   *
+   * @private
+   * @param {NodeJS.ProcessEnv} params
+   * @param {string} valueKey
+   * @returns
+   * @memberof Ifto
+   */
+  private getValueFromProcessEnv(params: NodeJS.ProcessEnv, valueKey: string) {
+    return params[valueKey] || params[valueKey.toUpperCase()];
   }
 }
