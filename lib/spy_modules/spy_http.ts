@@ -158,7 +158,11 @@ export class SpyHttp extends BaseModule {
       );
     }
 
-    return SpyHttp.originalRequestSecure(...args);
+    const clientRequest = SpyHttp.originalRequestSecure(
+      ...SpyHttp.getMockedRequestArgs(...args)
+    );
+
+    return SpyHttp.handleClientRequest(args[0], clientRequest);
   }
 
   /**
@@ -180,7 +184,11 @@ export class SpyHttp extends BaseModule {
       );
     }
 
-    return SpyHttp.originalGet(...SpyHttp.getMockedRequestArgs(...args));
+    const clientRequest = SpyHttp.originalGet(
+      ...SpyHttp.getMockedRequestArgs(...args)
+    );
+
+    return SpyHttp.handleClientRequest(args[0], clientRequest);
   }
 
   /**
