@@ -28,11 +28,11 @@ async handler(event: SQSEvent, context: Context) {
 
 ###### (Environment variables)
 
-* **ifto_start**
+* **ifto_start** or **IFTO_START**
 
 Please set the ```ifto_start``` as ```true``` in environment variables to allow the monitoring. (Monitoring will not start without setting the value as mentioned.)
 
-* **ifto_flush_when**
+* **ifto_flush_when** or **IFTO_FLUSH_WHEN**
 
 This indicates the ```minimum``` number of ```milliseconds``` remaining in ```context.getRemainingTimeInMillis()```, before flushing the logs to the output. (default setting is to write using ```console.log```). See the below.
 
@@ -130,6 +130,43 @@ Current log:
 2019-0-0T11:27:24.919 1: log entry 1
 2019-0-0T11:27:24.956 2: log entry 2
 2019-0-0T11:27:25.236 3: log entry 3
+```
+
+## Spy modules
+These modules are used to spy on operations which can take more execution time.
+Currently I have added a ```HTTP / HTTPS``` spy module.
+
+### HTTP / HTTPS spy module
+This module keeps track and output the ```url``` of any ```http or https request``` which is not complete at the time of flushing the logs.
+
+### Output with spy modules
+```
+START RequestId: 55ca052e-45ae-49c5-89ef-bd1e5bfb0abf Version: $LATEST
+2019-02-10T16:24:45.737Z	55ca052e-45ae-49c5-89ef-bd1e5bfb0abf
+Expecting a possible lambda timeout.
+Only 50 milliseconds remaining.
+(If this is a false positive error change the value by setting up the environment variable "ifto_flush_when").
+Current log:
+2019-02-10T17:24:43.41 0: Handler entry
+2019-02-10T17:24:43.53 1: GarbageCollector getInstance
+2019-02-10T17:24:43.54 2: GarbageCollector collect
+2019-02-10T17:24:45.35 3: runLong collect
+
+******************
+Spied module logs:
+******************
+
+http
+
+Possible unfinished HTTP requests
+2019-02-10T17:24:45.53 https://ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-004
+2019-02-10T17:24:45.41 https://ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-003
+2019-02-10T17:24:45.40 https://ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-002
+2019-02-10T17:24:45.38 https://ifto-spy-testing.free.beeceptor.com/a-request-which-takes-long-time-to-process-001
+
+END RequestId: 55ca052e-45ae-49c5-89ef-bd1e5bfb0abf
+REPORT RequestId: 55ca052e-45ae-49c5-89ef-bd1e5bfb0abf	Duration: 3003.15 ms	Billed Duration: 3000 ms 	Memory Size: 512 MB	Max Memory Used: 226 MB
+2019-02-10T16:24:45.789Z 55ca052e-45ae-49c5-89ef-bd1e5bfb0abf Task timed out after 3.00 seconds
 ```
 
 ## Important note
