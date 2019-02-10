@@ -35,11 +35,20 @@ export function getTime() {
   const date = new Date();
   return {
     y: date.getUTCFullYear(),
-    mon: date.getUTCMonth(),
-    d: date.getUTCDay(),
-    h: date.getUTCHours(),
-    m: date.getUTCMinutes(),
-    s: date.getUTCSeconds(),
+    mon: (date.getUTCMonth() + 1).toString().padStart(2, '0'),
+    d: date
+      .getUTCDate()
+      .toString()
+      .padStart(2, '0'),
+    h: (date.getUTCHours() + 1).toString().padStart(2, '0'),
+    m: date
+      .getUTCMinutes()
+      .toString()
+      .padStart(2, '0'),
+    s: date
+      .getUTCSeconds()
+      .toString()
+      .padStart(2, '0'),
     ms: date.getUTCMilliseconds()
   };
 }

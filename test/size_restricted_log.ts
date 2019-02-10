@@ -62,8 +62,8 @@ describe('Ifto', () => {
 
       const logEntries = log.getLogEntries();
       should(logEntries).deepEqual([
-        { key: 'k-1', value: '2019-0-0T5:53:45.847 v-1' },
-        { key: 'k-2', value: '2019-0-0T5:53:45.847 v-2' }
+        { key: 'k-1', value: '2019-01-20T06:53:45.847 v-1' },
+        { key: 'k-2', value: '2019-01-20T06:53:45.847 v-2' }
       ]);
       sinon.restore();
     });
@@ -74,7 +74,7 @@ describe('Ifto', () => {
       log.add('k-1', 'v-1');
       log.add('k-2', 'v-2');
       should(log.toString()).eql(
-        `2019-0-0T5:53:45.847 v-2\n2019-0-0T5:53:45.847 v-1`
+        `2019-01-20T06:53:45.847 v-2\n2019-01-20T06:53:45.847 v-1`
       );
       sinon.restore();
     });
@@ -85,8 +85,8 @@ describe('Ifto', () => {
       log.add('k-1', 'v-1');
       log.add('k-2', 'v-2');
       should(log.toJSON()).deepEqual([
-        '2019-0-0T5:53:45.847 v-2',
-        '2019-0-0T5:53:45.847 v-1'
+        '2019-01-20T06:53:45.847 v-2',
+        '2019-01-20T06:53:45.847 v-1'
       ]);
       sinon.restore();
     });
