@@ -147,9 +147,9 @@ Only 50 milliseconds remaining.
 (If this is a false positive error change the value by setting up the environment variable "ifto_flush_when").
 Current log:
 2019-02-10T17:24:43.41 0: Handler entry
-2019-02-10T17:24:43.53 1: GarbageCollector getInstance
-2019-02-10T17:24:43.54 2: GarbageCollector collect
-2019-02-10T17:24:45.35 3: runLong collect
+2019-02-10T17:24:43.53 1: Start operation 1
+2019-02-10T17:24:43.54 2: Start operation 2
+2019-02-10T17:24:45.35 3: Run HTTP requests
 
 ******************
 Spied module logs:
