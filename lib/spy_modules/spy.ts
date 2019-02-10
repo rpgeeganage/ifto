@@ -59,10 +59,10 @@ export class Spy {
     const entriesSpyHttp = SpyHttp.getEntries();
     op.push(this.buildPrintOutput(entriesSpyHttp));
     return `
-  ******************
-  Spied module logs:
-  ******************
-  ${op.join('')}`;
+******************
+Spied module logs:
+******************
+${op.join('')}`;
   }
 
   private buildPrintOutput(entries: Entries) {
