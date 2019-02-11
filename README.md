@@ -134,7 +134,7 @@ Current log:
 
 ## Spy modules :alien:
 These modules are used to spy on operations which can take more execution time.
-***(More modules will be added in the future :rocket: :rocket:)***
+***(More modules will be added in the future :rocket: :rocket:).***
 ### HTTP / HTTPS spy module :cop:
 This module keeps track **(most recent 10)** and outputs the ```URL``` of an ```HTTP``` or ```HTTPS``` request which is not complete at the time of flushing the logs.
 
