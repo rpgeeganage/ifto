@@ -132,13 +132,13 @@ Current log:
 2019-0-0T11:27:25.236 3: log entry 3
 ```
 
-## Spy modules
+## Spy modules :alien:
 These modules are used to spy on operations which can take more execution time.
-
-### HTTP / HTTPS spy module
+***(More modules will be added in the future :rocket: :rocket:)***
+### HTTP / HTTPS spy module :cop:
 This module keeps track **(most recent 10)** and outputs the ```URL``` of an ```HTTP``` or ```HTTPS``` request which is not complete at the time of flushing the logs.
 
-### Output with spy modules
+### Output with spy modules :point_right:
 ```
 START RequestId: 55ca052e-45ae-49c5-89ef-bd1e5bfb0abf Version: $LATEST
 2019-02-10T16:24:45.737Z	55ca052e-45ae-49c5-89ef-bd1e5bfb0abf
@@ -169,6 +169,8 @@ REPORT RequestId: 55ca052e-45ae-49c5-89ef-bd1e5bfb0abf	Duration: 3003.15 ms	Bill
 ```
 
 ## Important note
-* The default of ```ifto_flush_when``` is ``50`` and it was decided by running couple of lambdas and printing ```context.getRemainingTimeInMillis()``` value. In case of ```false positive``` change this value.
-* I haven't run any analysis on ``memory usage``.
-* I would thankfull to hear ``thoughts`` and ``bugs``.
+:bulb: The default of ```ifto_flush_when``` is ``50`` and it was decided by running couple of lambdas and printing ```context.getRemainingTimeInMillis()``` value. In case of ```false positive``` change this value.
+
+:bulb: I haven't run any analysis on ``memory usage``.
+
+:bulb: I would thankfull to hear ``thoughts`` and ``bugs``.
